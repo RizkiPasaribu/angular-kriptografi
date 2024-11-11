@@ -25,6 +25,11 @@ export class AppComponent {
 
   csvFile: File | null = null;
 
+  startTime?: Date;
+  endTime?: Date;
+  timeTaken?: string;
+  fileName: string = 'Test';
+
   // ! ||--------------------------------------------------------------------------------||
   // ! ||                                    Algorithm                                   ||
   // ! ||--------------------------------------------------------------------------------||
@@ -33,7 +38,9 @@ export class AppComponent {
     let keyTransform: number[] = tf.stringToByteArray(key);
 
     if (type == 'encrypt') {
-      let plainText: number[] = tf.stringToByteArray(this.teks);
+      let plainText: number[] = (this.teks as string)
+        .split('')
+        .map((char) => char.charCodeAt(0));
       let chiperText = tf.encrypt(keyTransform, plainText);
       this.teskResult = this.byteToString(chiperText);
     } else {
@@ -63,6 +70,8 @@ export class AppComponent {
   // ! ||                                  Logic Methods                                 ||
   // ! ||--------------------------------------------------------------------------------||
   async submit() {
+    this.startTime = new Date();
+
     await this.readFileSync(this.csvFile);
     let form = this.form.value;
 
@@ -77,6 +86,7 @@ export class AppComponent {
   async inputFile(file: Event) {
     if (!file) return;
     const target = file.target as HTMLInputElement;
+    this.fileName = target.files?.[0].name || 'Test';
     this.csvFile = target.files?.[0] || null;
   }
 
@@ -99,12 +109,12 @@ export class AppComponent {
     const a = window.document.createElement('a');
     const blob = new Blob([this.teskResult], { type: 'text/csv;' });
     a.href = window.URL.createObjectURL(blob);
-    a.download = `${this.form.get(['type'])?.value} ${
-      this.form.get(['algorithm'])?.value
-    }`;
+    a.download = `${this.fileName}`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
+
+    this.countTime();
   }
 
   hexToString(hex: string) {
@@ -121,5 +131,14 @@ export class AppComponent {
       hex += str.charCodeAt(i).toString(16).padStart(2, '0');
     }
     return hex;
+  }
+
+  countTime() {
+    this.endTime = new Date();
+
+    const diffMs = this.endTime.getTime() - this.startTime!.getTime() || 0;
+
+    const diffMillSeconds = Math.floor(diffMs);
+    this.timeTaken = `${diffMillSeconds} ms`;
   }
 }

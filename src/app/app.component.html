@@ -1,10 +1,10 @@
 <div class="container d-flex align-items-center justify-content-center" style="height: 100%">
-  <form [formGroup]="form" (submit)="submit()">
+  <form [formGroup]="form" (submit)="submit()" class="border border-5 p-5">
     <h1 class="fw-bold">Aplikasi Enkripsi/Dekripsi CSV file</h1>
 
     <div class="mb-3 mt-5">
       <label for="key" class="form-label fw-medium">Key</label>
-      <input formControlName="key" type="text" class="form-control" id="key" placeholder="12345678">
+      <input formControlName="key" type="text" class="form-control" id="key" placeholder="Input key">
     </div>
 
     <div class="mb-3">
@@ -28,7 +28,8 @@
       <input #inputCsv (change)="inputFile($event)" type="file" class="form-control" id="file">
     </div>
 
-    <div class="d-flex justify justify-content-end">
+    <div class="d-flex justify justify-content-between align-items-center">
+      <div>Time Taken: {{this.timeTaken}}</div>
       <button [disabled]="!form.valid || !csvFile" type="submit" class="btn btn-primary fw-medium">Submit</button>
     </div>
   </form>
